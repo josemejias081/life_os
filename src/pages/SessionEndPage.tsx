@@ -1,4 +1,6 @@
 import { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Check, Circle, XCircle, ArrowLeft } from 'lucide-react';
 import { AppState, Session } from '../types';
 
 interface Props {
@@ -26,134 +28,166 @@ export default function SessionEndPage({ session, state, onEnd }: Props) {
   };
 
   const handleFinish = () => {
-    onEnd(session.id, result, energy, notes);
+    onEnd(session.id, result!, energy!, notes);
   };
 
   const handleSkipNotes = () => {
-    onEnd(session.id, result, energy, '');
+    onEnd(session.id, result!, energy!, '');
+  };
+
+  const stepVariants = {
+    initial: { opacity: 0, x: 30 },
+    animate: { opacity: 1, x: 0, transition: { duration: 0.4, ease: [0.4, 0, 0.2, 1] } },
+    exit: { opacity: 0, x: -30, transition: { duration: 0.3 } }
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-900 to-gray-800 flex items-center justify-center px-6">
-      <div className="max-w-md w-full page-transition">
+    <div className="min-h-screen flex items-center justify-center px-6 relative overflow-hidden">
+      {/* Background */}
+      <div className="absolute inset-0 bg-gradient-to-b from-zinc-950 via-zinc-900 to-zinc-950" />
+      <div className="absolute top-1/3 left-1/2 -translate-x-1/2 w-[400px] h-[400px] bg-indigo-500/5 rounded-full blur-3xl pointer-events-none" />
+
+      <div className="max-w-md w-full relative z-10">
         {/* Header */}
-        <div className="text-center mb-10">
-          <p className="text-gray-500 text-xs uppercase tracking-wider mb-2">Sesión finalizada</p>
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="text-center mb-10"
+        >
+          <p className="text-zinc-500 text-[10px] uppercase tracking-[0.3em] mb-2">Sesión finalizada</p>
           <h2 className="text-xl font-semibold text-white">{project?.name}</h2>
-        </div>
+        </motion.div>
 
-        {/* Step 1: Result */}
-        {step === 'result' && (
-          <div className="page-transition">
-            <p className="text-center text-gray-300 text-lg mb-8">
-              ¿Terminaste la misión?
-            </p>
-            <div className="space-y-3">
-              <button
-                onClick={() => handleResultSelect('completed')}
-                className="w-full bg-white/10 border border-white/10 text-white py-4 rounded-xl text-left px-5 hover:bg-white/15 transition-all active:scale-[0.98]"
-              >
-                <span className="text-lg mr-3">✓</span>
-                <span className="font-medium">Sí, completada</span>
-              </button>
-              <button
-                onClick={() => handleResultSelect('partial')}
-                className="w-full bg-white/10 border border-white/10 text-white py-4 rounded-xl text-left px-5 hover:bg-white/15 transition-all active:scale-[0.98]"
-              >
-                <span className="text-lg mr-3">◐</span>
-                <span className="font-medium">Parcialmente</span>
-              </button>
-              <button
-                onClick={() => handleResultSelect('not-completed')}
-                className="w-full bg-white/10 border border-white/10 text-white py-4 rounded-xl text-left px-5 hover:bg-white/15 transition-all active:scale-[0.98]"
-              >
-                <span className="text-lg mr-3">✗</span>
-                <span className="font-medium">No la terminé</span>
-              </button>
-            </div>
-          </div>
-        )}
-
-        {/* Step 2: Energy */}
-        {step === 'energy' && (
-          <div className="page-transition">
-            <p className="text-center text-gray-300 text-lg mb-8">
-              ¿Cómo estuvo tu energía?
-            </p>
-            <div className="grid grid-cols-4 gap-3">
-              <button
-                onClick={() => handleEnergySelect('excellent')}
-                className="flex flex-col items-center gap-2 bg-white/10 border border-white/10 rounded-xl p-4 hover:bg-white/15 transition-all active:scale-[0.98]"
-              >
-                <span className="text-3xl">😀</span>
-                <span className="text-[10px] text-gray-400">Excelente</span>
-              </button>
-              <button
-                onClick={() => handleEnergySelect('good')}
-                className="flex flex-col items-center gap-2 bg-white/10 border border-white/10 rounded-xl p-4 hover:bg-white/15 transition-all active:scale-[0.98]"
-              >
-                <span className="text-3xl">🙂</span>
-                <span className="text-[10px] text-gray-400">Buena</span>
-              </button>
-              <button
-                onClick={() => handleEnergySelect('normal')}
-                className="flex flex-col items-center gap-2 bg-white/10 border border-white/10 rounded-xl p-4 hover:bg-white/15 transition-all active:scale-[0.98]"
-              >
-                <span className="text-3xl">😐</span>
-                <span className="text-[10px] text-gray-400">Normal</span>
-              </button>
-              <button
-                onClick={() => handleEnergySelect('low')}
-                className="flex flex-col items-center gap-2 bg-white/10 border border-white/10 rounded-xl p-4 hover:bg-white/15 transition-all active:scale-[0.98]"
-              >
-                <span className="text-3xl">😞</span>
-                <span className="text-[10px] text-gray-400">Baja</span>
-              </button>
-            </div>
-            <button
-              onClick={() => setStep('result')}
-              className="w-full mt-6 text-gray-500 text-sm hover:text-gray-300 transition-colors"
+        <AnimatePresence mode="wait">
+          {/* Step 1: Result */}
+          {step === 'result' && (
+            <motion.div
+              key="result"
+              variants={stepVariants}
+              initial="initial"
+              animate="animate"
+              exit="exit"
             >
-              ← Volver
-            </button>
-          </div>
-        )}
+              <p className="text-center text-zinc-300 text-lg mb-8 font-light">
+                ¿Terminaste la misión?
+              </p>
+              <div className="space-y-3">
+                {[
+                  { value: 'completed' as const, icon: Check, label: 'Sí, completada', color: 'emerald' },
+                  { value: 'partial' as const, icon: Circle, label: 'Parcialmente', color: 'amber' },
+                  { value: 'not-completed' as const, icon: XCircle, label: 'No la terminé', color: 'red' }
+                ].map(({ value, icon: Icon, label, color }) => (
+                  <motion.button
+                    key={value}
+                    whileHover={{ scale: 1.01 }}
+                    whileTap={{ scale: 0.98 }}
+                    onClick={() => handleResultSelect(value)}
+                    className="w-full glass-card py-4 px-5 text-left flex items-center gap-4 group hover:border-indigo-500/20 transition-all"
+                  >
+                    <div className={`w-9 h-9 rounded-xl flex items-center justify-center ${
+                      color === 'emerald' ? 'bg-emerald-500/10' :
+                      color === 'amber' ? 'bg-amber-500/10' : 'bg-red-500/10'
+                    }`}>
+                      <Icon size={16} className={
+                        color === 'emerald' ? 'text-emerald-400' :
+                        color === 'amber' ? 'text-amber-400' : 'text-red-400'
+                      } />
+                    </div>
+                    <span className="font-medium text-zinc-200 group-hover:text-white transition-colors">{label}</span>
+                  </motion.button>
+                ))}
+              </div>
+            </motion.div>
+          )}
 
-        {/* Step 3: Notes */}
-        {step === 'notes' && (
-          <div className="page-transition">
-            <p className="text-center text-gray-300 text-lg mb-6">
-              ¿Algo que quieras recordar?
-            </p>
-            <textarea
-              value={notes}
-              onChange={(e) => setNotes(e.target.value)}
-              placeholder="Una nota opcional sobre la sesión..."
-              rows={4}
-              className="w-full bg-white/10 border border-white/10 rounded-xl p-4 text-white placeholder-gray-500 resize-none focus:outline-none focus:border-blue-500/50 text-sm"
-            />
-            <div className="flex gap-3 mt-6">
-              <button
-                onClick={handleSkipNotes}
-                className="flex-1 py-3 rounded-xl border border-white/10 text-gray-400 font-medium hover:bg-white/5 transition-all"
-              >
-                Saltar
-              </button>
-              <button
-                onClick={handleFinish}
-                className="flex-1 py-3 rounded-xl bg-blue-600 text-white font-medium hover:bg-blue-700 transition-all active:scale-[0.98]"
-              >
-                Guardar
-              </button>
-            </div>
-            <button
-              onClick={() => setStep('energy')}
-              className="w-full mt-4 text-gray-500 text-sm hover:text-gray-300 transition-colors"
+          {/* Step 2: Energy */}
+          {step === 'energy' && (
+            <motion.div
+              key="energy"
+              variants={stepVariants}
+              initial="initial"
+              animate="animate"
+              exit="exit"
             >
-              ← Volver
-            </button>
-          </div>
-        )}
+              <p className="text-center text-zinc-300 text-lg mb-8 font-light">
+                ¿Cómo estuvo tu energía?
+              </p>
+              <div className="grid grid-cols-4 gap-3">
+                {[
+                  { value: 'excellent' as const, emoji: '😀', label: 'Excelente' },
+                  { value: 'good' as const, emoji: '🙂', label: 'Buena' },
+                  { value: 'normal' as const, emoji: '😐', label: 'Normal' },
+                  { value: 'low' as const, emoji: '😞', label: 'Baja' }
+                ].map(({ value, emoji, label }) => (
+                  <motion.button
+                    key={value}
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    onClick={() => handleEnergySelect(value)}
+                    className="glass-card p-4 flex flex-col items-center gap-2 group hover:border-indigo-500/20"
+                  >
+                    <span className="text-3xl">{emoji}</span>
+                    <span className="text-[9px] text-zinc-500 uppercase tracking-wider font-medium">{label}</span>
+                  </motion.button>
+                ))}
+              </div>
+              <button
+                onClick={() => setStep('result')}
+                className="w-full mt-8 text-zinc-500 text-sm hover:text-indigo-400 transition-colors flex items-center justify-center gap-2"
+              >
+                <ArrowLeft size={12} />
+                Volver
+              </button>
+            </motion.div>
+          )}
+
+          {/* Step 3: Notes */}
+          {step === 'notes' && (
+            <motion.div
+              key="notes"
+              variants={stepVariants}
+              initial="initial"
+              animate="animate"
+              exit="exit"
+            >
+              <p className="text-center text-zinc-300 text-lg mb-6 font-light">
+                ¿Algo que quieras recordar?
+              </p>
+              <div className="glass-card p-5 mb-6">
+                <textarea
+                  value={notes}
+                  onChange={(e) => setNotes(e.target.value)}
+                  placeholder="Una nota opcional sobre la sesión..."
+                  rows={4}
+                  className="w-full bg-transparent text-zinc-200 placeholder-zinc-600 resize-none focus:outline-none text-sm leading-relaxed"
+                  autoFocus
+                />
+              </div>
+              <div className="flex gap-3">
+                <button
+                  onClick={handleSkipNotes}
+                  className="btn-ghost flex-1"
+                >
+                  Saltar
+                </button>
+                <button
+                  onClick={handleFinish}
+                  className="btn-primary flex-1 flex items-center justify-center gap-2"
+                >
+                  <Check size={16} />
+                  Guardar
+                </button>
+              </div>
+              <button
+                onClick={() => setStep('energy')}
+                className="w-full mt-6 text-zinc-500 text-sm hover:text-indigo-400 transition-colors flex items-center justify-center gap-2"
+              >
+                <ArrowLeft size={12} />
+                Volver
+              </button>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
     </div>
   );

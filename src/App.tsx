@@ -2,9 +2,10 @@ import { useState, useEffect, useCallback } from 'react';
 import { AppState, Session } from './types';
 import {
   loadState, saveState, resetDawnFlag, markDawnSeen,
-  startSession, endSession, getActiveSession, getFocusProject,
-  getTodayMission, getWeekSessions, getFocusDayNumber
+  startSession, endSession, getActiveSession,
 } from './store';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Home, FolderOpen, Clock, RotateCcw, Settings } from 'lucide-react';
 
 // Pages
 import DawnPage from './pages/DawnPage';
@@ -19,6 +20,14 @@ import SessionEndPage from './pages/SessionEndPage';
 import ReviewFormPage from './pages/ReviewFormPage';
 
 type Page = 'dawn' | 'home' | 'projects' | 'project-detail' | 'sessions' | 'reviews' | 'settings' | 'session-active' | 'session-end' | 'review-form';
+
+const STORAGE_KEY = 'lifeos-data';
+
+const pageVariants = {
+  initial: { opacity: 0, y: 10, filter: 'blur(4px)' },
+  animate: { opacity: 1, y: 0, filter: 'blur(0px)', transition: { duration: 0.4, ease: [0.4, 0, 0.2, 1] } },
+  exit: { opacity: 0, y: -10, filter: 'blur(4px)', transition: { duration: 0.3 } }
+};
 
 function App() {
   const [state, setState] = useState<AppState>(loadState);
@@ -91,8 +100,6 @@ function App() {
     setCurrentPage('reviews');
   }, [state]);
 
-  const STORAGE_KEY = 'lifeos-data';
-
   const handleResetData = useCallback(() => {
     localStorage.removeItem(STORAGE_KEY);
     localStorage.removeItem('lifeos-dawn-seen');
@@ -131,37 +138,75 @@ function App() {
 
   const showNav = currentPage !== 'dawn' && currentPage !== 'session-active' && currentPage !== 'session-end' && currentPage !== 'review-form';
 
-  return (
-    <div className="min-h-screen bg-[#FAFAFA] flex flex-col">
-      <main className="flex-1 page-transition">
-        {renderPage()}
-      </main>
-      {showNav && (
-        <nav className="fixed bottom-0 left-0 right-0 bg-white/90 backdrop-blur-lg border-t border-gray-100 px-6 py-3 z-50">
-          <div className="max-w-lg mx-auto flex justify-between items-center">
-            <NavButton icon="☀️" label="Inicio" active={currentPage === 'home'} onClick={() => setCurrentPage('home')} />
-            <NavButton icon="📁" label="Proyectos" active={currentPage === 'projects' || currentPage === 'project-detail'} onClick={() => setCurrentPage('projects')} />
-            <NavButton icon="⏱️" label="Sesiones" active={currentPage === 'sessions'} onClick={() => setCurrentPage('sessions')} />
-            <NavButton icon="🔄" label="Revisiones" active={currentPage === 'reviews'} onClick={() => setCurrentPage('reviews')} />
-            <NavButton icon="⚙️" label="Ajustes" active={currentPage === 'settings'} onClick={() => setCurrentPage('settings')} />
-          </div>
-        </nav>
-      )}
-    </div>
-  );
-}
+  const navItems = [
+    { icon: Home, label: 'Inicio', page: 'home' as Page },
+    { icon: FolderOpen, label: 'Proyectos', page: 'projects' as Page },
+    { icon: Clock, label: 'Sesiones', page: 'sessions' as Page },
+    { icon: RotateCcw, label: 'Revisiones', page: 'reviews' as Page },
+    { icon: Settings, label: 'Ajustes', page: 'settings' as Page },
+  ];
 
-function NavButton({ icon, label, active, onClick }: { icon: string; label: string; active: boolean; onClick: () => void }) {
   return (
-    <button
-      onClick={onClick}
-      className={`flex flex-col items-center gap-0.5 px-3 py-1 rounded-lg transition-all ${
-        active ? 'text-blue-600' : 'text-gray-400 hover:text-gray-600'
-      }`}
-    >
-      <span className="text-xl">{icon}</span>
-      <span className="text-[10px] font-medium">{label}</span>
-    </button>
+    <div className="min-h-screen relative">
+      {/* Ambient background */}
+      <div className="ambient-bg" />
+      <div className="noise-overlay" />
+
+      {/* Page content */}
+      <div className="relative z-10">
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={currentPage}
+            variants={pageVariants}
+            initial="initial"
+            animate="animate"
+            exit="exit"
+          >
+            {renderPage()}
+          </motion.div>
+        </AnimatePresence>
+      </div>
+
+      {/* Navigation */}
+      <AnimatePresence>
+        {showNav && (
+          <motion.nav
+            initial={{ y: 100, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            exit={{ y: 100, opacity: 0 }}
+            transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+            className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50"
+          >
+            <div className="glass-card-static px-2 py-2 flex items-center gap-1 rounded-2xl">
+              {navItems.map(({ icon: Icon, label, page }) => {
+                const isActive = currentPage === page || (page === 'projects' && currentPage === 'project-detail');
+                return (
+                  <button
+                    key={page}
+                    onClick={() => setCurrentPage(page)}
+                    className={`relative flex flex-col items-center gap-0.5 px-4 py-2.5 rounded-xl transition-all duration-300 ${
+                      isActive 
+                        ? 'text-indigo-400' 
+                        : 'text-zinc-500 hover:text-zinc-300'
+                    }`}
+                  >
+                    {isActive && (
+                      <motion.div
+                        layoutId="nav-indicator"
+                        className="absolute inset-0 bg-indigo-500/10 rounded-xl border border-indigo-500/20"
+                        transition={{ type: 'spring', stiffness: 400, damping: 30 }}
+                      />
+                    )}
+                    <Icon size={18} strokeWidth={isActive ? 2.5 : 1.5} className="relative z-10" />
+                    <span className="text-[9px] font-medium relative z-10 tracking-wide">{label}</span>
+                  </button>
+                );
+              })}
+            </div>
+          </motion.nav>
+        )}
+      </AnimatePresence>
+    </div>
   );
 }
 

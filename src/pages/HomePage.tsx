@@ -51,19 +51,19 @@ export default function HomePage({ state, onStartSession }: Props) {
   }
 
   return (
-    <div className="min-h-screen pb-32 pt-10 px-6">
+    <div className="min-h-screen pb-32 pt-8 sm:pt-10 px-5 sm:px-6">
       <div className="max-w-lg mx-auto">
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
-          className="mb-10"
+          className="mb-8 sm:mb-10"
         >
           <p className="text-zinc-500 text-[11px] font-medium uppercase tracking-[0.2em] mb-2">
             {dateStr}
           </p>
-          <h1 className="text-3xl font-bold text-white tracking-tight">
+          <h1 className="text-2xl sm:text-3xl font-bold text-white tracking-tight">
             Buenos días, {state.user.name}
           </h1>
           <p className="text-zinc-500 text-sm mt-2">¿En qué debes invertir tu tiempo hoy?</p>

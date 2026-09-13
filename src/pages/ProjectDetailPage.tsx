@@ -26,14 +26,14 @@ export default function ProjectDetailPage({ state, projectId, onBack }: Props) {
     .slice(0, 5);
 
   return (
-    <div className="min-h-screen pb-32 pt-10 px-6">
+    <div className="min-h-screen pb-32 pt-8 sm:pt-10 px-5 sm:px-6">
       <div className="max-w-lg mx-auto">
         {/* Back */}
         <motion.button
           initial={{ opacity: 0, x: -10 }}
           animate={{ opacity: 1, x: 0 }}
           onClick={onBack}
-          className="flex items-center gap-2 text-zinc-500 text-sm mb-6 hover:text-indigo-400 transition-colors group"
+          className="flex items-center gap-2 text-zinc-500 text-sm mb-5 hover:text-indigo-400 transition-colors group"
         >
           <ArrowLeft size={14} className="group-hover:-translate-x-0.5 transition-transform" />
           Proyectos
@@ -46,8 +46,8 @@ export default function ProjectDetailPage({ state, projectId, onBack }: Props) {
           transition={{ duration: 0.5 }}
           className="mb-8"
         >
-          <div className="flex items-center gap-3 mb-2">
-            <h1 className="text-3xl font-bold text-white tracking-tight">{project.name}</h1>
+          <div className="flex items-start gap-3 mb-2">
+            <h1 className="text-2xl sm:text-3xl font-bold text-white tracking-tight">{project.name}</h1>
             {isFocus && (
               <span className="flex items-center gap-1 px-2.5 py-1 bg-indigo-500/10 text-indigo-400 text-[9px] font-bold rounded-full uppercase tracking-wider border border-indigo-500/20">
                 <Zap size={10} />

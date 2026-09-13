@@ -175,16 +175,16 @@ function App() {
             animate={{ y: 0, opacity: 1 }}
             exit={{ y: 100, opacity: 0 }}
             transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-            className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50"
+            className="fixed bottom-4 sm:bottom-6 left-1/2 -translate-x-1/2 z-50 w-[calc(100%-2rem)] sm:w-auto max-w-md"
           >
-            <div className="glass-card-static px-2 py-2 flex items-center gap-1 rounded-2xl">
+            <div className="glass-card-static px-1.5 sm:px-2 py-1.5 sm:py-2 flex items-center justify-around gap-0.5 sm:gap-1 rounded-2xl">
               {navItems.map(({ icon: Icon, label, page }) => {
                 const isActive = currentPage === page || (page === 'projects' && currentPage === 'project-detail');
                 return (
                   <button
                     key={page}
                     onClick={() => setCurrentPage(page)}
-                    className={`relative flex flex-col items-center gap-0.5 px-4 py-2.5 rounded-xl transition-all duration-300 ${
+                    className={`relative flex flex-col items-center gap-0.5 px-3 sm:px-4 py-2 sm:py-2.5 rounded-xl transition-all duration-300 flex-1 sm:flex-initial ${
                       isActive 
                         ? 'text-indigo-400' 
                         : 'text-zinc-500 hover:text-zinc-300'

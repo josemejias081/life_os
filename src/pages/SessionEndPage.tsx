@@ -159,7 +159,7 @@ export default function SessionEndPage({ session, state, onEnd }: Props) {
                   onChange={(e) => setNotes(e.target.value)}
                   placeholder="Una nota opcional sobre la sesión..."
                   rows={4}
-                  className="w-full bg-transparent text-zinc-200 placeholder-zinc-600 resize-none focus:outline-none text-sm leading-relaxed"
+                  className="w-full bg-zinc-900/50 border border-zinc-800 rounded-xl p-4 text-zinc-100 placeholder-zinc-600 resize-none focus:outline-none focus:border-indigo-500/50 text-sm leading-relaxed"
                   autoFocus
                 />
               </div>

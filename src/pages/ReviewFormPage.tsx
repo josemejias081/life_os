@@ -48,7 +48,7 @@ export default function ReviewFormPage({ onSave, onCancel }: Props) {
               className="glass-card p-5"
             >
               <label className="block">
-                <span className={`text-[10px] uppercase tracking-[0.15em] font-semibold mb-2 block ${
+                <span className={`text-[10px] uppercase tracking-[0.15em] font-semibold mb-3 block ${
                   q.color === 'indigo' ? 'text-indigo-400' :
                   q.color === 'amber' ? 'text-amber-400' : 'text-emerald-400'
                 }`}>
@@ -58,8 +58,8 @@ export default function ReviewFormPage({ onSave, onCancel }: Props) {
                   value={q.value}
                   onChange={(e) => q.setter(e.target.value)}
                   placeholder={q.placeholder}
-                  rows={2}
-                  className="w-full bg-transparent text-zinc-200 placeholder-zinc-600 resize-none text-sm focus:outline-none leading-relaxed"
+                  rows={3}
+                  className="w-full bg-zinc-900/50 border border-zinc-800 rounded-xl p-4 text-zinc-100 placeholder-zinc-600 resize-none focus:outline-none focus:border-indigo-500/50 text-sm leading-relaxed"
                 />
               </label>
             </motion.div>
